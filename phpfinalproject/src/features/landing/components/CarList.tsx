@@ -9,11 +9,11 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Users, Gauge, Fuel, Lock, Search, X, Filter, ChevronDown, ChevronUp } from 'lucide-react';
 import { mockCars } from '@/features/cars/data/mockCars';
 import { useAuthStore } from '@/features/auth/stores/authStore';
-import { LoginModal } from '@/features/auth/components/LoginModal';
+import { AuthModal } from '@/features/auth/components/AuthModal';
 import { toast } from 'sonner';
 
 export function CarList() {
-  const [showLogin, setShowLogin] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   // Search and filter state
@@ -84,7 +84,7 @@ export function CarList() {
 
   const handleRentClick = (carName: string) => {
     if (!isAuthenticated) {
-      setShowLogin(true);
+      setShowAuth(true);
       toast.info('Please login to rent a vehicle');
     } else {
       toast.success(`Rental request initiated for ${carName}`);
@@ -403,7 +403,7 @@ export function CarList() {
         </div>
       </section>
 
-      <LoginModal open={showLogin} onOpenChange={setShowLogin} />
+      <AuthModal open={showAuth} onOpenChange={setShowAuth} defaultTab="login" />
     </>
   );
 }

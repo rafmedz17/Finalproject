@@ -3,11 +3,12 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu, X, ShipWheel, LucideCar } from 'lucide-react';
 import { useAuthStore } from '@/features/auth/stores/authStore';
-import { LoginModal } from '@/features/auth/components/LoginModal';
+import { AuthModal } from '@/features/auth/components/AuthModal';
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [showLogin, setShowLogin] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
+  const [authTab, setAuthTab] = useState<'login' | 'signup'>('login');
   const { isAuthenticated, user, logout } = useAuthStore();
 
   const navItems = [
@@ -59,12 +60,17 @@ export function Navbar() {
                   </Button>
                 </>
               ) : (
-                <Button
-                  onClick={() => setShowLogin(true)}
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-gold"
-                >
-                  Login
-                </Button>
+                <>
+                  <Button
+                    onClick={() => {
+                      setAuthTab('login');
+                      setShowAuth(true);
+                    }}
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-gold"
+                  >
+                    Login
+                  </Button>
+                </>
               )}
             </div>
 
@@ -107,22 +113,25 @@ export function Navbar() {
                   </Button>
                 </>
               ) : (
-                <Button
-                  onClick={() => {
-                    setShowLogin(true);
-                    setIsOpen(false);
-                  }}
-                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-gold"
-                >
-                  Login
-                </Button>
+                <div className="space-y-2">
+                  <Button
+                    onClick={() => {
+                      setAuthTab('login');
+                      setShowAuth(true);
+                      setIsOpen(false);
+                    }}
+                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-gold"
+                  >
+                    Login
+                  </Button>
+                </div>
               )}
             </div>
           </div>
         )}
       </nav>
 
-      <LoginModal open={showLogin} onOpenChange={setShowLogin} />
+      <AuthModal open={showAuth} onOpenChange={setShowAuth} defaultTab={authTab} />
     </>
   );
 }
