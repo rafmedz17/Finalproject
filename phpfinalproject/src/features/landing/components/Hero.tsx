@@ -3,6 +3,13 @@ import { ArrowRight, Shield, Clock, Award } from 'lucide-react';
 import heroImage from '@/assets/hero-car.jpg';
 
 export function Hero() {
+  const scrollToCars = () => {
+    const carsSection = document.getElementById('cars');
+    if (carsSection) {
+      carsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <section id="home" className="relative min-h-screen flex items-center overflow-hidden pt-20">
       {/* Background Image with Overlay */}
@@ -35,6 +42,7 @@ export function Hero() {
           <div className="flex flex-wrap gap-4 mb-12">
             <Button
               size="lg"
+              onClick={scrollToCars}
               className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-premium group"
             >
               Explore Collection
