@@ -87,7 +87,7 @@ export function CarList() {
                   {/* Price & Action */}
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="text-2xl font-bold text-primary">${car.pricePerDay}</span>
+                      <span className="text-2xl font-bold text-primary">₱{car.pricePerDay}</span>
                       <span className="text-sm text-muted-foreground">/day</span>
                     </div>
                     <Button

@@ -17,7 +17,7 @@ export function AdminDashboard() {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate('/adminlogin');
   };
 
   const stats = [
@@ -80,6 +80,9 @@ export function AdminDashboard() {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+                Manage Vehicle
+              </Button>
+              <Button variant="outline" className="border-border text-foreground hover:bg-secondary">
                 Add New Vehicle
               </Button>
               <Button variant="outline" className="border-border text-foreground hover:bg-secondary">
