@@ -130,7 +130,7 @@ export function CarList() {
             </div>
 
             {/* Filter Controls */}
-            <div className="bg-card border border-border rounded-lg p-6">
+            <div className="bg-card border border-border rounded-lg pt-3 pl-4 pr-4 pb-3">
               <div className="flex items-center justify-between mb-4">
                 <button
                   onClick={() => setShowFilters(!showFilters)}
