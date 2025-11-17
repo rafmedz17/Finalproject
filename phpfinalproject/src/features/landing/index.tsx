@@ -19,10 +19,10 @@ export function LandingPage() {
               Lord of the Rims
             </h3>
             <p className="text-muted-foreground mb-4">
-              Premium luxury car rentals for the discerning driver
+              Premium car rentals for the discerning driver
             </p>
             <p className="text-sm text-muted-foreground">
-              © 2024 Lord of the Rims. All rights reserved.
+              © 2025 Lord of the Rims. All rights reserved.
             </p>
           </div>
         </div>

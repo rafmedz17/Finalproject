@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Crown } from 'lucide-react';
+import { Menu, X, ShipWheel, LucideCar } from 'lucide-react';
 import { useAuthStore } from '@/features/auth/stores/authStore';
 import { LoginModal } from '@/features/auth/components/LoginModal';
 
@@ -24,7 +24,7 @@ export function Navbar() {
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2 group">
               <div className="relative">
-                <Crown className="h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
+                <LucideCar className="h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
                 <div className="absolute inset-0 bg-primary/20 blur-xl group-hover:bg-primary/30 transition-all" />
               </div>
               <span className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
