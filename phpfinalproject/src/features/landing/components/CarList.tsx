@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -101,10 +102,6 @@ export function CarList() {
                 Vehicle Collection
               </span>
             </h2>
-            <p className="text-xl text-muted-foreground">
-              Choose from our handpicked selection of luxury vehicles, each offering
-              unmatched performance and sophistication.
-            </p>
           </div>
 
           {/* Search and Filters */}
@@ -325,9 +322,10 @@ export function CarList() {
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredCars.map((car) => (
-                <div
+                <Link
                   key={car.id}
-                  className="group bg-card rounded-xl overflow-hidden border border-border hover:border-primary/50 hover:shadow-gold transition-all"
+                  to={`/cars/${car.id}`}
+                  className="group bg-card rounded-xl overflow-hidden border border-border hover:border-primary/50 hover:shadow-gold transition-all block"
                 >
                 {/* Car Image */}
                 <div className="relative h-56 overflow-hidden bg-secondary">
@@ -377,7 +375,11 @@ export function CarList() {
                       <span className="text-sm text-muted-foreground">/day</span>
                     </div>
                     <Button
-                      onClick={() => handleRentClick(car.name)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleRentClick(car.name);
+                      }}
                       disabled={!car.available}
                       className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
                     >
@@ -394,7 +396,7 @@ export function CarList() {
                     </Button>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
             </div>
           )}

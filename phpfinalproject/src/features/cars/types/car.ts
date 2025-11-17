@@ -9,4 +9,9 @@ export interface Car {
   transmission: 'Automatic' | 'Manual';
   fuel: string;
   available: boolean;
+  description?: string;
+  year?: number;
+  mileage?: string;
+  features?: string[];
+  images?: string[];
 }

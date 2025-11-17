@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { AdminLogin } from "./features/admin/pages/AdminLogin";
 import { AdminDashboard } from "./features/admin/pages/AdminDashboard";
+import { CarDetail } from "./features/cars/pages/CarDetail";
 
 const queryClient = new QueryClient();
 
@@ -18,6 +19,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/cars/:id" element={<CarDetail />} />
           <Route path="/adminlogin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
