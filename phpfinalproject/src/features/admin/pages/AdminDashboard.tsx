@@ -79,11 +79,10 @@ export function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
-                Manage Vehicle
-              </Button>
-              <Button variant="outline" className="border-border text-foreground hover:bg-secondary">
-                Add New Vehicle
+              <Button
+                onClick={() => navigate('/admin/vehicles')}
+                className="bg-primary text-primary-foreground hover:bg-primary/90">
+                Manage Vehicles
               </Button>
               <Button variant="outline" className="border-border text-foreground hover:bg-secondary">
                 Manage Bookings
