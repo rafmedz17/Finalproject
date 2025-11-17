@@ -22,9 +22,7 @@ export function AdminDashboard() {
 
   const stats = [
     { title: 'Total Vehicles', value: '200', icon: Car, color: 'text-blue-500' },
-    { title: 'Active Rentals', value: '87', icon: Users, color: 'text-green-500' },
     { title: 'Revenue (Month)', value: '$185K', icon: DollarSign, color: 'text-primary' },
-    { title: 'Premium Tier', value: '45', icon: Crown, color: 'text-amber-500' },
   ];
 
   return (
@@ -86,9 +84,6 @@ export function AdminDashboard() {
               </Button>
               <Button variant="outline" className="border-border text-foreground hover:bg-secondary">
                 Manage Bookings
-              </Button>
-              <Button variant="outline" className="border-border text-foreground hover:bg-secondary">
-                View Reports
               </Button>
             </div>
           </CardContent>
