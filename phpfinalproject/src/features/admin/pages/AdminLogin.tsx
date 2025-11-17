@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuthStore } from '@/features/auth/stores/authStore';
 import { toast } from 'sonner';
-import { Shield, Loader2 } from 'lucide-react';
+import { Shield, Loader2, Car} from 'lucide-react';
 
 const adminLoginSchema = z.object({
   email: z.string().email({ message: 'Invalid email address' }),

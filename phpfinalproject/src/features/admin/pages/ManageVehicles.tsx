@@ -11,8 +11,9 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useAuthStore } from '@/features/auth/stores/authStore';
 import { useVehicleStore } from '@/features/admin/stores/vehicleStore';
+import { AdminSidebar } from '@/features/admin/components/AdminSidebar';
 import { Car } from '@/features/cars/types/car';
-import { Crown, Plus, Pencil, Trash2, ArrowLeft } from 'lucide-react';
+import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export function ManageVehicles() {
@@ -134,33 +135,29 @@ export function ManageVehicles() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-card border-b border-border sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/admin/dashboard')}
-                className="gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back
-              </Button>
-              <Crown className="h-6 w-6 text-primary" />
-              <h1 className="text-2xl font-bold text-foreground">Manage Vehicles</h1>
-            </div>
-            <Button onClick={handleAdd} className="bg-primary">
-              <Plus className="h-4 w-4 mr-2" />
-              Add New Vehicle
-            </Button>
-          </div>
-        </div>
-      </header>
+      {/* Sidebar */}
+      <AdminSidebar />
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+      {/* Main Content - Offset by sidebar width */}
+      <div className="lg:pl-64 transition-all duration-300">
+        {/* Header */}
+        <header className="bg-card border-b border-border sticky top-0 z-30">
+          <div className="px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">Manage Vehicles</h1>
+                <p className="text-sm text-muted-foreground">Add, edit, or remove vehicles from your fleet</p>
+              </div>
+              <Button onClick={handleAdd} className="bg-primary">
+                <Plus className="h-4 w-4 mr-2" />
+                Add New Vehicle
+              </Button>
+            </div>
+          </div>
+        </header>
+
+        {/* Main Content */}
+        <main className="p-6">
         <div className="bg-card border border-border rounded-lg overflow-hidden">
           <Table>
             <TableHeader>
@@ -227,10 +224,10 @@ export function ManageVehicles() {
             </div>
           )}
         </div>
-      </main>
+        </main>
 
-      {/* Add/Edit Modal */}
-      <Dialog open={isAddEditOpen} onOpenChange={setIsAddEditOpen}>
+        {/* Add/Edit Modal */}
+        <Dialog open={isAddEditOpen} onOpenChange={setIsAddEditOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
@@ -378,6 +375,7 @@ export function ManageVehicles() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      </div>
     </div>
   );
 }
