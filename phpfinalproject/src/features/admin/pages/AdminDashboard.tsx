@@ -52,7 +52,6 @@ export function AdminDashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold text-foreground mb-1">{stat.value}</div>
-                  <p className="text-xs text-muted-foreground">{stat.change}</p>
                 </CardContent>
               </Card>
             ))}

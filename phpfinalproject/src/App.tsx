@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import { AdminLogin } from "./features/admin/pages/AdminLogin";
 import { AdminDashboard } from "./features/admin/pages/AdminDashboard";
 import { ManageVehicles } from "./features/admin/pages/ManageVehicles";
+import { ManageBookings } from "./features/admin/pages/ManageBookings";
 import { CarDetail } from "./features/cars/pages/CarDetail";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/adminlogin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/vehicles" element={<ManageVehicles />} />
+          <Route path="/admin/bookings" element={<ManageBookings />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
