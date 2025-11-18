@@ -8,12 +8,16 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Checkbox } from '@/components/ui/checkbox';
 import { Users, Gauge, Fuel, Lock, Search, X, Filter, ChevronDown, ChevronUp } from 'lucide-react';
 import { mockCars } from '@/features/cars/data/mockCars';
+import { Car } from '@/features/cars/types/car';
 import { useAuthStore } from '@/features/auth/stores/authStore';
 import { AuthModal } from '@/features/auth/components/AuthModal';
+import { BookingModal } from '@/features/cars/components/BookingModal';
 import { toast } from 'sonner';
 
 export function CarList() {
   const [showAuth, setShowAuth] = useState(false);
+  const [showBooking, setShowBooking] = useState(false);
+  const [selectedCar, setSelectedCar] = useState<Car | null>(null);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   // Search and filter state
@@ -82,12 +86,13 @@ export function CarList() {
     );
   };
 
-  const handleRentClick = (carName: string) => {
+  const handleRentClick = (car: Car) => {
     if (!isAuthenticated) {
       setShowAuth(true);
       toast.info('Please login to rent a vehicle');
     } else {
-      toast.success(`Rental request initiated for ${carName}`);
+      setSelectedCar(car);
+      setShowBooking(true);
     }
   };
 
@@ -378,7 +383,7 @@ export function CarList() {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        handleRentClick(car.name);
+                        handleRentClick(car);
                       }}
                       disabled={!car.available}
                       className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
@@ -404,6 +409,7 @@ export function CarList() {
       </section>
 
       <AuthModal open={showAuth} onOpenChange={setShowAuth} defaultTab="login" />
+      {selectedCar && <BookingModal open={showBooking} onOpenChange={setShowBooking} car={selectedCar} />}
     </>
   );
 }
