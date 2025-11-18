@@ -6,7 +6,7 @@ import { useAuthStore } from '@/features/auth/stores/authStore';
 import { AuthModal } from '@/features/auth/components/AuthModal';
 import { BookingModal } from '@/features/cars/components/BookingModal';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   ArrowLeft,
   Users,
@@ -14,7 +14,9 @@ import {
   Fuel,
   Calendar,
   MapPin,
+  Check,
   ChevronLeft,
+  Home
 } from 'lucide-react';
 
 export function CarDetail() {
@@ -23,6 +25,11 @@ export function CarDetail() {
   const [showAuth, setShowAuth] = useState(false);
   const [showBooking, setShowBooking] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  // Scroll to top when component mounts or car changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
 
   // Find the car by ID
   const car = mockCars.find((c) => c.id === id);
@@ -114,24 +121,6 @@ export function CarDetail() {
                 )}
               </div>
             </div>
-
-            {/* Thumbnail Gallery (if multiple images exist) */}
-            {car.images && car.images.length > 1 && (
-              <div className="grid grid-cols-3 gap-4">
-                {car.images.slice(0, 3).map((img, index) => (
-                  <div
-                    key={index}
-                    className="aspect-video rounded-lg overflow-hidden bg-secondary border border-border cursor-pointer hover:border-primary transition-colors"
-                  >
-                    <img
-                      src={img}
-                      alt={`${car.name} view ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
 
           {/* Right Column - Details */}
@@ -203,6 +192,21 @@ export function CarDetail() {
               <div>
                 <h3 className="text-lg font-semibold text-foreground mb-3">About This Vehicle</h3>
                 <p className="text-muted-foreground leading-relaxed">{car.description}</p>
+              </div>
+            )}
+
+            {/* Features */}
+            {car.features && car.features.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold text-foreground mb-4">Features & Amenities</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {car.features.map((feature, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                      <span className="text-sm text-foreground">{feature}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 
