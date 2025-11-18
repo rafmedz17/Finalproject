@@ -13,7 +13,7 @@ import { useAuthStore } from '@/features/auth/stores/authStore';
 import { useVehicleStore } from '@/features/admin/stores/vehicleStore';
 import { AdminSidebar } from '@/features/admin/components/AdminSidebar';
 import { Car } from '@/features/cars/types/car';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Upload, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 export function ManageVehicles() {
@@ -38,7 +38,14 @@ export function ManageVehicles() {
     fuel: '',
     available: true,
     description: '',
+    year: new Date().getFullYear().toString(),
+    mileage: '',
+    features: '',
   });
+
+  // Image state
+  const [imagePreview, setImagePreview] = useState<string>('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   // Check authentication
   useEffect(() => {
@@ -60,7 +67,12 @@ export function ManageVehicles() {
       fuel: '',
       available: true,
       description: '',
+      year: new Date().getFullYear().toString(),
+      mileage: '',
+      features: '',
     });
+    setImagePreview('');
+    setImageFile(null);
     setIsAddEditOpen(true);
   };
 
@@ -77,8 +89,48 @@ export function ManageVehicles() {
       fuel: vehicle.fuel,
       available: vehicle.available,
       description: vehicle.description || '',
+      year: vehicle.year?.toString() || new Date().getFullYear().toString(),
+      mileage: vehicle.mileage || '',
+      features: vehicle.features?.join(', ') || '',
     });
+    setImagePreview(vehicle.image);
+    setImageFile(null);
     setIsAddEditOpen(true);
+  };
+
+  // Handle image file selection
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/svg+xml'];
+    if (!validTypes.includes(file.type)) {
+      toast.error('Please upload a valid image file (JPG, PNG, WebP, or SVG)');
+      return;
+    }
+
+    // Validate file size (2MB limit)
+    const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+    if (file.size > maxSize) {
+      toast.error('Image size must be less than 2MB');
+      return;
+    }
+
+    // Read file and convert to base64
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string;
+      setImagePreview(base64String);
+      setImageFile(file);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Remove image
+  const handleRemoveImage = () => {
+    setImagePreview('');
+    setImageFile(null);
   };
 
   // Save vehicle (add or edit)
@@ -99,11 +151,11 @@ export function ManageVehicles() {
       fuel: formData.fuel,
       available: formData.available,
       description: formData.description,
-      image: '/placeholder.svg',
-      year: 2024,
-      mileage: 'Unlimited',
-      features: [],
-      images: ['/placeholder.svg'],
+      image: imagePreview || '/placeholder.svg',
+      year: Number(formData.year) || new Date().getFullYear(),
+      mileage: formData.mileage || 'Unlimited',
+      features: formData.features ? formData.features.split(',').map(f => f.trim()).filter(f => f) : [],
+      images: imagePreview ? [imagePreview] : ['/placeholder.svg'],
     };
 
     if (editingVehicle) {
@@ -239,6 +291,47 @@ export function ManageVehicles() {
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
+            {/* Image Upload Section */}
+            <div className="space-y-2">
+              <Label>Vehicle Image</Label>
+              <div className="flex items-start gap-4">
+                {/* Image Preview */}
+                {imagePreview ? (
+                  <div className="relative">
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="w-32 h-24 object-cover rounded-lg border-2 border-border"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="w-32 h-24 bg-muted rounded-lg border-2 border-dashed border-border flex items-center justify-center">
+                    <Upload className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                )}
+
+                {/* File Input */}
+                <div className="flex-1 space-y-2">
+                  <Input
+                    type="file"
+                    accept="image/jpeg,image/jpg,image/png,image/webp,image/svg+xml"
+                    onChange={handleImageChange}
+                    className="cursor-pointer"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Upload JPG, PNG, WebP or SVG (max 2MB)
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Name *</Label>
@@ -319,6 +412,39 @@ export function ManageVehicles() {
                   placeholder="e.g., Gasoline"
                 />
               </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="year">Year</Label>
+                <Input
+                  id="year"
+                  type="number"
+                  value={formData.year}
+                  onChange={(e) => setFormData({ ...formData, year: e.target.value })}
+                  placeholder="e.g., 2024"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="mileage">Mileage</Label>
+                <Input
+                  id="mileage"
+                  value={formData.mileage}
+                  onChange={(e) => setFormData({ ...formData, mileage: e.target.value })}
+                  placeholder="e.g., 50,000 km or Unlimited"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="features">Features (comma-separated)</Label>
+              <Textarea
+                id="features"
+                value={formData.features}
+                onChange={(e) => setFormData({ ...formData, features: e.target.value })}
+                placeholder="e.g., Leather Seats, Sunroof, GPS Navigation"
+                rows={2}
+              />
             </div>
 
             <div className="space-y-2">
