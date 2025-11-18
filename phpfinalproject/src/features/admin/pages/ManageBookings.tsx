@@ -18,7 +18,7 @@ import { toast } from 'sonner';
 export function ManageBookings() {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuthStore();
-  const { bookings, updateBookingStatus, cancelBooking } = useBookingStore();
+  const { bookings, fetchBookings, updateBookingStatus, cancelBooking } = useBookingStore();
 
   // Modal states
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
@@ -36,6 +36,11 @@ export function ManageBookings() {
       navigate('/adminlogin');
     }
   }, [isAuthenticated, user, navigate]);
+
+  // Fetch bookings from API on mount
+  useEffect(() => {
+    fetchBookings();
+  }, [fetchBookings]);
 
   // Filter bookings - split into active and historical
   const activeBookings = useMemo(() => {

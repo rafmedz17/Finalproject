@@ -2,12 +2,14 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuthStore } from '@/features/auth/stores/authStore';
+import { useVehicleStore } from '@/features/admin/stores/vehicleStore';
 import { AdminSidebar } from '@/features/admin/components/AdminSidebar';
 import { Car, DollarSign, TrendingUp, Users } from 'lucide-react';
 
 export function AdminDashboard() {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuthStore();
+  const { vehicles, fetchVehicles } = useVehicleStore();
 
   useEffect(() => {
     if (!isAuthenticated || user?.role !== 'admin') {
@@ -15,8 +17,13 @@ export function AdminDashboard() {
     }
   }, [isAuthenticated, user, navigate]);
 
+  // Fetch vehicles from API on mount
+  useEffect(() => {
+    fetchVehicles();
+  }, [fetchVehicles]);
+
   const stats = [
-    { title: 'Total Vehicles', value: '200', icon: Car, color: 'text-blue-500', change: '+12 this month' },
+    { title: 'Total Vehicles', value: vehicles.length.toString(), icon: Car, color: 'text-blue-500', change: '+12 this month' },
   ];
 
   return (

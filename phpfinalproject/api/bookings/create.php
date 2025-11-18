@@ -106,7 +106,7 @@ try {
 
     $status = 'pending';
     $stmt->bind_param(
-        'siissssiidds',
+        'siisssssidds',
         $bookingNumber,
         $_SESSION['user_id'],
         $vehicleId,
@@ -122,7 +122,8 @@ try {
     );
 
     if (!$stmt->execute()) {
-        throw new Exception('Failed to create booking');
+        error_log('MySQL Error: ' . $stmt->error);
+        throw new Exception('Failed to create booking: ' . $stmt->error);
     }
 
     $bookingId = $conn->insert_id;
@@ -168,7 +169,8 @@ try {
     ]);
 
 } catch (Exception $e) {
-    sendErrorResponse('An error occurred while creating booking', 500);
+    error_log('Create booking error: ' . $e->getMessage());
+    sendErrorResponse('An error occurred while creating booking: ' . $e->getMessage(), 500);
 } finally {
     closeDbConnection($conn);
 }
