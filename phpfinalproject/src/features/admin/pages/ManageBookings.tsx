@@ -37,9 +37,31 @@ export function ManageBookings() {
     }
   }, [isAuthenticated, user, navigate]);
 
-  // Filter bookings
-  const filteredBookings = useMemo(() => {
+  // Filter bookings - split into active and historical
+  const activeBookings = useMemo(() => {
     return bookings.filter((booking) => {
+      // Only show active statuses (pending, confirmed, active)
+      const isActive = ['pending', 'confirmed', 'active'].includes(booking.status);
+      if (!isActive) return false;
+
+      const matchesSearch =
+        searchTerm === '' ||
+        booking.bookingNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        booking.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        booking.customerEmail.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesStatus = statusFilter === 'all' || booking.status === statusFilter;
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [bookings, searchTerm, statusFilter]);
+
+  const historicalBookings = useMemo(() => {
+    return bookings.filter((booking) => {
+      // Only show historical statuses (completed, cancelled)
+      const isHistorical = ['completed', 'cancelled'].includes(booking.status);
+      if (!isHistorical) return false;
+
       const matchesSearch =
         searchTerm === '' ||
         booking.bookingNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -163,82 +185,172 @@ export function ManageBookings() {
           </div>
 
           {/* Results count */}
-          <div className="mb-4">
-            <p className="text-sm text-muted-foreground">
-              Showing <span className="font-semibold text-foreground">{filteredBookings.length}</span> of{' '}
-              <span className="font-semibold text-foreground">{bookings.length}</span> bookings
-            </p>
+          <div className="mb-6 flex flex-wrap gap-4 items-center">
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                Active: {activeBookings.length}
+              </Badge>
+              <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200">
+                Historical: {historicalBookings.length}
+              </Badge>
+              <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                Total: {bookings.length}
+              </Badge>
+            </div>
           </div>
 
-          {/* Table */}
-          <div className="bg-card border border-border rounded-lg overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Booking #</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Vehicle</TableHead>
-                  <TableHead>Dates</TableHead>
-                  <TableHead>Total</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredBookings.map((booking) => (
-                  <TableRow key={booking.id}>
-                    <TableCell className="font-medium">{booking.bookingNumber}</TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{booking.customerName}</div>
-                        <div className="text-sm text-muted-foreground">{booking.customerEmail}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>{booking.vehicleName}</TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        <div>{booking.startDate}</div>
-                        <div className="text-muted-foreground">to {booking.endDate}</div>
-                        <div className="text-xs text-muted-foreground">({booking.totalDays} days)</div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-semibold text-primary">₱{booking.totalAmount.toLocaleString()}</TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(booking.status)}>
-                        {booking.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleStatusClick(booking)}
-                          disabled={booking.status === 'cancelled'}
-                        >
-                          <RefreshCw className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleCancelClick(booking)}
-                          disabled={booking.status === 'cancelled' || booking.status === 'completed'}
-                          className="text-red-500 hover:text-red-700"
-                        >
-                          <XCircle className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
+          {/* Active Bookings Table */}
+          <div className="mb-8">
+            <div className="mb-4 flex items-center gap-2">
+              <h2 className="text-xl font-semibold text-foreground">Active Bookings</h2>
+              <Badge className="bg-green-500">{activeBookings.length}</Badge>
+            </div>
+            <div className="bg-card border border-border rounded-lg overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Booking #</TableHead>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Vehicle</TableHead>
+                    <TableHead>Dates</TableHead>
+                    <TableHead>Total</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {activeBookings.map((booking) => (
+                    <TableRow key={booking.id}>
+                      <TableCell className="font-medium">{booking.bookingNumber}</TableCell>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{booking.customerName}</div>
+                          <div className="text-sm text-muted-foreground">{booking.customerEmail}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>{booking.vehicleName}</TableCell>
+                      <TableCell>
+                        <div className="text-sm">
+                          <div>{booking.startDate}</div>
+                          <div className="text-muted-foreground">to {booking.endDate}</div>
+                          <div className="text-xs text-muted-foreground">({booking.totalDays} days)</div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-semibold text-primary">₱{booking.totalAmount.toLocaleString()}</TableCell>
+                      <TableCell>
+                        <Badge className={getStatusColor(booking.status)}>
+                          {booking.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleStatusClick(booking)}
+                            disabled={booking.status === 'cancelled'}
+                          >
+                            <RefreshCw className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleCancelClick(booking)}
+                            disabled={booking.status === 'cancelled' || booking.status === 'completed'}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <XCircle className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
 
-            {filteredBookings.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground">No bookings found. Try adjusting your search or filters.</p>
-              </div>
-            )}
+              {activeBookings.length === 0 && (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">No active bookings found.</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Historical Bookings Table */}
+          <div>
+            <div className="mb-4 flex items-center gap-2">
+              <h2 className="text-xl font-semibold text-muted-foreground">Completed & Cancelled Bookings</h2>
+              <Badge variant="secondary" className="bg-gray-200 text-gray-700">{historicalBookings.length}</Badge>
+            </div>
+            <div className="bg-card/50 border border-border/50 rounded-lg overflow-hidden opacity-90">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/50">
+                    <TableHead className="text-muted-foreground">Booking #</TableHead>
+                    <TableHead className="text-muted-foreground">Customer</TableHead>
+                    <TableHead className="text-muted-foreground">Vehicle</TableHead>
+                    <TableHead className="text-muted-foreground">Dates</TableHead>
+                    <TableHead className="text-muted-foreground">Total</TableHead>
+                    <TableHead className="text-muted-foreground">Status</TableHead>
+                    <TableHead className="text-right text-muted-foreground">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {historicalBookings.map((booking) => (
+                    <TableRow key={booking.id} className="opacity-80">
+                      <TableCell className="font-medium text-muted-foreground">{booking.bookingNumber}</TableCell>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium text-muted-foreground">{booking.customerName}</div>
+                          <div className="text-sm text-muted-foreground/70">{booking.customerEmail}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">{booking.vehicleName}</TableCell>
+                      <TableCell>
+                        <div className="text-sm">
+                          <div className="text-muted-foreground">{booking.startDate}</div>
+                          <div className="text-muted-foreground/70">to {booking.endDate}</div>
+                          <div className="text-xs text-muted-foreground/70">({booking.totalDays} days)</div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-semibold text-muted-foreground">₱{booking.totalAmount.toLocaleString()}</TableCell>
+                      <TableCell>
+                        <Badge className={getStatusColor(booking.status)}>
+                          {booking.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleStatusClick(booking)}
+                            disabled={booking.status === 'cancelled'}
+                            className="opacity-50"
+                          >
+                            <RefreshCw className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={true}
+                            className="text-red-500/50 opacity-50 cursor-not-allowed"
+                          >
+                            <XCircle className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+
+              {historicalBookings.length === 0 && (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">No historical bookings found.</p>
+                </div>
+              )}
+            </div>
           </div>
         </main>
       </div>
