@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { mockCars } from '@/features/cars/data/mockCars';
 import { useAuthStore } from '@/features/auth/stores/authStore';
 import { AuthModal } from '@/features/auth/components/AuthModal';
+import { BookingModal } from '@/features/cars/components/BookingModal';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import {
@@ -22,6 +23,7 @@ export function CarDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [showAuth, setShowAuth] = useState(false);
+  const [showBooking, setShowBooking] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   // Find the car by ID
@@ -48,7 +50,7 @@ export function CarDetail() {
       setShowAuth(true);
       toast.info('Please login to rent this vehicle');
     } else {
-      toast.success(`Rental request initiated for ${car.name}`);
+      setShowBooking(true);
     }
   };
 
@@ -273,6 +275,7 @@ export function CarDetail() {
       </div>
 
       <AuthModal open={showAuth} onOpenChange={setShowAuth} defaultTab="signup" />
+      {car && <BookingModal open={showBooking} onOpenChange={setShowBooking} car={car} />}
     </div>
   );
 }

@@ -51,6 +51,16 @@ export function Navbar() {
               {isAuthenticated ? (
                 <>
                   <span className="text-muted-foreground">Welcome, {user?.name}</span>
+                  {user?.role === 'customer' && (
+                    <Link to="/my-bookings">
+                      <Button
+                        variant="outline"
+                        className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                      >
+                        My Bookings
+                      </Button>
+                    </Link>
+                  )}
                   <Button
                     onClick={logout}
                     variant="outline"
@@ -101,6 +111,16 @@ export function Navbar() {
               {isAuthenticated ? (
                 <>
                   <div className="text-muted-foreground">Welcome, {user?.name}</div>
+                  {user?.role === 'customer' && (
+                    <Link to="/my-bookings" onClick={() => setIsOpen(false)}>
+                      <Button
+                        variant="outline"
+                        className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                      >
+                        My Bookings
+                      </Button>
+                    </Link>
+                  )}
                   <Button
                     onClick={() => {
                       logout();
