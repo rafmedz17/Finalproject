@@ -14,9 +14,7 @@ import {
   Fuel,
   Calendar,
   MapPin,
-  Check,
   ChevronLeft,
-  Home
 } from 'lucide-react';
 
 export function CarDetail() {
@@ -205,21 +203,6 @@ export function CarDetail() {
               <div>
                 <h3 className="text-lg font-semibold text-foreground mb-3">About This Vehicle</h3>
                 <p className="text-muted-foreground leading-relaxed">{car.description}</p>
-              </div>
-            )}
-
-            {/* Features */}
-            {car.features && car.features.length > 0 && (
-              <div>
-                <h3 className="text-lg font-semibold text-foreground mb-4">Features & Amenities</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {car.features.map((feature, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-primary flex-shrink-0" />
-                      <span className="text-sm text-foreground">{feature}</span>
-                    </div>
-                  ))}
-                </div>
               </div>
             )}
 
