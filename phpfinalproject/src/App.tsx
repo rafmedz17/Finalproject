@@ -1,8 +1,10 @@
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useAuthStore } from "@/features/auth/stores/authStore";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { AdminLogin } from "./features/admin/pages/AdminLogin";
@@ -14,7 +16,15 @@ import { MyBookings } from "./features/customer/pages/MyBookings";
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = () => {
+  const { checkAuth } = useAuthStore();
+
+  // Check authentication on app load to restore session
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
@@ -34,6 +44,7 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
