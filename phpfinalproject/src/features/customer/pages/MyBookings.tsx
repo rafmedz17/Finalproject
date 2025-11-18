@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 export function MyBookings() {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuthStore();
-  const { bookings, cancelBooking } = useBookingStore();
+  const { bookings, fetchBookings, cancelBooking } = useBookingStore();
 
   // Modal states
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
@@ -32,6 +32,11 @@ export function MyBookings() {
       toast.error('Please login to view your bookings');
     }
   }, [isAuthenticated, user, navigate]);
+
+  // Fetch bookings from API on mount
+  useEffect(() => {
+    fetchBookings();
+  }, [fetchBookings]);
 
   // Filter bookings for current user
   const myBookings = useMemo(() => {
