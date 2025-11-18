@@ -1,8 +1,8 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { mockCars } from '@/features/cars/data/mockCars';
 import { useAuthStore } from '@/features/auth/stores/authStore';
+import { useVehicleStore } from '@/features/admin/stores/vehicleStore';
 import { AuthModal } from '@/features/auth/components/AuthModal';
 import { BookingModal } from '@/features/cars/components/BookingModal';
 import { toast } from 'sonner';
@@ -25,6 +25,12 @@ export function CarDetail() {
   const [showAuth, setShowAuth] = useState(false);
   const [showBooking, setShowBooking] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const { vehicles, fetchVehicles } = useVehicleStore();
+
+  // Fetch vehicles from API on mount
+  useEffect(() => {
+    fetchVehicles();
+  }, [fetchVehicles]);
 
   // Scroll to top when component mounts or car changes
   useEffect(() => {
@@ -32,7 +38,7 @@ export function CarDetail() {
   }, [id]);
 
   // Find the car by ID
-  const car = mockCars.find((c) => c.id === id);
+  const car = vehicles.find((c) => c.id === id);
 
   // If car not found, show not found message
   if (!car) {
@@ -231,7 +237,7 @@ export function CarDetail() {
         <div className="mt-20">
           <h2 className="text-3xl font-bold text-foreground mb-8">Similar Vehicles</h2>
           <div className="grid md:grid-cols-3 gap-6">
-            {mockCars
+            {vehicles
               .filter((c) => c.id !== car.id && c.category === car.category)
               .slice(0, 3)
               .map((similarCar) => (

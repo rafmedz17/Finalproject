@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -7,9 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Users, Gauge, Fuel, Lock, Search, X, Filter, ChevronDown, ChevronUp } from 'lucide-react';
-import { mockCars } from '@/features/cars/data/mockCars';
 import { Car } from '@/features/cars/types/car';
 import { useAuthStore } from '@/features/auth/stores/authStore';
+import { useVehicleStore } from '@/features/admin/stores/vehicleStore';
 import { AuthModal } from '@/features/auth/components/AuthModal';
 import { BookingModal } from '@/features/cars/components/BookingModal';
 import { toast } from 'sonner';
@@ -19,6 +19,12 @@ export function CarList() {
   const [showBooking, setShowBooking] = useState(false);
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const { vehicles, fetchVehicles, isLoading } = useVehicleStore();
+
+  // Fetch vehicles from API on mount
+  useEffect(() => {
+    fetchVehicles();
+  }, [fetchVehicles]);
 
   // Search and filter state
   const [searchTerm, setSearchTerm] = useState('');
@@ -31,7 +37,7 @@ export function CarList() {
 
   // Filter logic
   const filteredCars = useMemo(() => {
-    return mockCars.filter((car) => {
+    return vehicles.filter((car) => {
       // Search filter (name and brand)
       const matchesSearch = searchTerm === '' ||
         car.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -63,12 +69,12 @@ export function CarList() {
       return matchesSearch && matchesCategory && matchesAvailability &&
              matchesFuelType && matchesSeats && matchesPriceRange;
     });
-  }, [searchTerm, selectedCategory, showAvailableOnly, selectedFuelTypes, selectedSeats, priceRange]);
+  }, [vehicles, searchTerm, selectedCategory, showAvailableOnly, selectedFuelTypes, selectedSeats, priceRange]);
 
   // Get unique values for filters
-  const categories = Array.from(new Set(mockCars.map(car => car.category)));
-  const fuelTypes = Array.from(new Set(mockCars.map(car => car.fuel)));
-  const seatOptions = Array.from(new Set(mockCars.map(car => car.seats))).sort((a, b) => a - b);
+  const categories = Array.from(new Set(vehicles.map(car => car.category)));
+  const fuelTypes = Array.from(new Set(vehicles.map(car => car.fuel)));
+  const seatOptions = Array.from(new Set(vehicles.map(car => car.seats))).sort((a, b) => a - b);
 
   // Helper functions
   const clearAllFilters = () => {
@@ -305,7 +311,7 @@ export function CarList() {
             <div className="text-center">
               <p className="text-sm text-muted-foreground">
                 Showing <span className="font-semibold text-foreground">{filteredCars.length}</span> of{' '}
-                <span className="font-semibold text-foreground">{mockCars.length}</span> vehicles
+                <span className="font-semibold text-foreground">{vehicles.length}</span> vehicles
               </p>
             </div>
           </div>

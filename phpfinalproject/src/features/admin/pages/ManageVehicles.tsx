@@ -19,7 +19,7 @@ import { toast } from 'sonner';
 export function ManageVehicles() {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuthStore();
-  const { vehicles, addVehicle, updateVehicle, deleteVehicle } = useVehicleStore();
+  const { vehicles, fetchVehicles, addVehicle, updateVehicle, deleteVehicle } = useVehicleStore();
 
   // Modal states
   const [isAddEditOpen, setIsAddEditOpen] = useState(false);
@@ -53,6 +53,11 @@ export function ManageVehicles() {
       navigate('/adminlogin');
     }
   }, [isAuthenticated, user, navigate]);
+
+  // Fetch vehicles from API on mount
+  useEffect(() => {
+    fetchVehicles();
+  }, [fetchVehicles]);
 
   // Open add modal
   const handleAdd = () => {

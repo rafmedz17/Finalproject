@@ -39,11 +39,11 @@ $image = isset($input['image']) ? $input['image'] : '/placeholder.svg';
 $seats = intval($input['seats']);
 $transmission = trim($input['transmission']);
 $fuel = trim($input['fuel']);
-$available = isset($input['available']) ? filter_var($input['available'], FILTER_VALIDATE_BOOLEAN) : true;
-$description = isset($input['description']) ? trim($input['description']) : null;
-$year = isset($input['year']) ? intval($input['year']) : null;
-$mileage = isset($input['mileage']) ? trim($input['mileage']) : null;
-$features = isset($input['features']) ? json_encode($input['features']) : null;
+$available = isset($input['available']) ? (filter_var($input['available'], FILTER_VALIDATE_BOOLEAN) ? 1 : 0) : 1;
+$description = isset($input['description']) && trim($input['description']) !== '' ? trim($input['description']) : null;
+$year = isset($input['year']) && $input['year'] !== '' ? intval($input['year']) : null;
+$mileage = isset($input['mileage']) && trim($input['mileage']) !== '' ? trim($input['mileage']) : null;
+$features = isset($input['features']) && !empty($input['features']) ? json_encode($input['features']) : '[]';
 
 // Validate numeric values
 if ($pricePerDay <= 0) {
@@ -66,7 +66,7 @@ try {
     ');
 
     $stmt->bind_param(
-        'sssdsississs',
+        'sssdsissisiss',
         $name,
         $brand,
         $category,
@@ -83,7 +83,8 @@ try {
     );
 
     if (!$stmt->execute()) {
-        throw new Exception('Failed to create vehicle');
+        error_log('MySQL Error: ' . $stmt->error);
+        throw new Exception('Failed to create vehicle: ' . $stmt->error);
     }
 
     $vehicleId = $conn->insert_id;
@@ -115,7 +116,8 @@ try {
     ]);
 
 } catch (Exception $e) {
-    sendErrorResponse('An error occurred while creating vehicle', 500);
+    error_log('Create vehicle error: ' . $e->getMessage());
+    sendErrorResponse('An error occurred while creating vehicle: ' . $e->getMessage(), 500);
 } finally {
     closeDbConnection($conn);
 }
